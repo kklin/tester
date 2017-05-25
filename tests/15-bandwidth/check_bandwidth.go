@@ -14,6 +14,7 @@ import (
 	"github.com/quilt/quilt/api"
 	"github.com/quilt/quilt/api/client/getter"
 	"github.com/quilt/quilt/db"
+	"github.com/quilt/tester/formatter"
 )
 
 // The required bandwidth in Mb/s between two containers on different machines.
@@ -30,6 +31,8 @@ type testResult struct {
 }
 
 func main() {
+	log.SetFormatter(formatter.Formatter)
+
 	clientGetter := getter.New()
 
 	clnt, err := clientGetter.Client(api.DefaultSocket)

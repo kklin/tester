@@ -16,6 +16,7 @@ import (
 	"github.com/quilt/quilt/api/client/getter"
 	"github.com/quilt/quilt/db"
 	"github.com/quilt/quilt/join"
+	"github.com/quilt/tester/formatter"
 )
 
 // anyIPAllowed is used to indicate that any non-error response is okay for an external
@@ -44,6 +45,7 @@ type testResult struct {
 }
 
 func main() {
+	log.SetFormatter(formatter.Formatter)
 	clientGetter := getter.New()
 
 	clnt, err := clientGetter.Client(api.DefaultSocket)

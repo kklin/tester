@@ -9,6 +9,7 @@ import (
 	"github.com/quilt/quilt/api"
 	"github.com/quilt/quilt/api/client/getter"
 	"github.com/quilt/quilt/db"
+	"github.com/quilt/tester/formatter"
 )
 
 const (
@@ -17,6 +18,8 @@ const (
 )
 
 func main() {
+	log.SetFormatter(formatter.Formatter)
+
 	c, err := getter.New().Client(api.DefaultSocket)
 	if err != nil {
 		log.WithError(err).Fatal("FAILED, couldn't get local client")

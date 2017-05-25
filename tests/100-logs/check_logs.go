@@ -10,11 +10,14 @@ import (
 
 	"github.com/quilt/quilt/api"
 	"github.com/quilt/quilt/api/client/getter"
+	"github.com/quilt/tester/formatter"
 )
 
 var machineRegex = regexp.MustCompile(`Machine-(\d+){(.+?), .*, PublicIP=(.*?),`)
 
 func main() {
+	log.SetFormatter(formatter.Formatter)
+
 	printQuiltPs()
 
 	c, err := getter.New().Client(api.DefaultSocket)

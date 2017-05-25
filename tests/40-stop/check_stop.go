@@ -9,11 +9,14 @@ import (
 	"github.com/quilt/quilt/api"
 	"github.com/quilt/quilt/api/client/getter"
 	"github.com/quilt/quilt/minion/supervisor/images"
+	"github.com/quilt/tester/formatter"
 
 	log "github.com/Sirupsen/logrus"
 )
 
 func main() {
+	log.SetFormatter(formatter.Formatter)
+
 	if err := exec.Command("quilt", "stop", "-containers").Run(); err != nil {
 		log.WithError(err).Fatal("FAILED, couldn't run stop command")
 	}
