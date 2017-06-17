@@ -1,6 +1,6 @@
 const {createDeployment} = require("@quilt/quilt");
 var spark = require("@quilt/spark");
-var infrastructure = require("../../config/infrastructure.js")
+var infrastructure = require("@quilt/tester/config/infrastructure")
 
 var deployment = createDeployment({});
 deployment.deploy(infrastructure);

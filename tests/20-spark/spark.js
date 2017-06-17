@@ -1,6 +1,6 @@
 const {createDeployment, publicInternet, enough} = require("@quilt/quilt");
 var spark = require("@quilt/spark");
-var infrastructure = require("../../config/infrastructure.js")
+var infrastructure = require("@quilt/tester/config/infrastructure")
 
 // Application
 // sprk.exclusive enforces that no two Spark containers should be on the

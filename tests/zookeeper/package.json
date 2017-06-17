@@ -1,0 +1,10 @@
+{
+  "name": "@quilt/tester-zookeeper",
+  "version": "0.0.1",
+  "license": "MIT",
+  "dependencies": {
+    "@quilt/tester": "quilt/tester",
+    "@quilt/quilt": "quilt/quilt",
+    "@quilt/zookeeper": "quilt/zookeeper"
+  }
+}

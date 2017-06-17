@@ -2,7 +2,7 @@ const {createDeployment} = require("@quilt/quilt");
 var HaProxy = require("@quilt/haproxy").Haproxy;
 var Mongo = require("@quilt/mongo");
 var Node = require("@quilt/nodejs");
-var infrastructure = require("../../config/infrastructure.js")
+var infrastructure = require("@quilt/tester/config/infrastructure")
 
 var deployment = createDeployment({});
 deployment.deploy(infrastructure);

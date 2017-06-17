@@ -1,0 +1,9 @@
+{
+  "name": "@quilt/tester-stop",
+  "version": "0.0.1",
+  "license": "MIT",
+  "dependencies": {
+    "@quilt/tester": "quilt/tester",
+    "@quilt/quilt": "quilt/quilt"
+  }
+}

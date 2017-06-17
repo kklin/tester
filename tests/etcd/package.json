@@ -1,10 +1,10 @@
 {
-  "name": "@quilt/tester",
+  "name": "@quilt/tester-etcd",
   "version": "0.0.1",
-  "main": "./tester.js",
   "license": "MIT",
   "dependencies": {
+    "@quilt/tester": "quilt/tester",
     "@quilt/quilt": "quilt/quilt",
-    "@quilt/tester": "quilt/tester"
+    "@quilt/etcd": "quilt/etcd"
   }
 }

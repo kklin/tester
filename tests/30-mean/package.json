@@ -1,0 +1,12 @@
+{
+  "name": "@quilt/tester-mean",
+  "version": "0.0.1",
+  "license": "MIT",
+  "dependencies": {
+    "@quilt/tester": "quilt/tester",
+    "@quilt/quilt": "quilt/quilt",
+    "@quilt/haproxy": "quilt/haproxy",
+    "@quilt/mongo": "quilt/mongo",
+    "@quilt/nodejs": "quilt/nodejs"
+  }
+}

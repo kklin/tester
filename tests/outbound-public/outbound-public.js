@@ -1,5 +1,5 @@
 const {createDeployment, Service, Container, publicInternet} = require("@quilt/quilt");
-var infrastructure = require("../../config/infrastructure.js")
+var infrastructure = require("@quilt/tester/config/infrastructure")
 
 var deployment = createDeployment();
 deployment.deploy(infrastructure);

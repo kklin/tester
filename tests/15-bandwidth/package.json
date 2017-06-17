@@ -1,7 +1,6 @@
 {
-  "name": "@quilt/tester",
+  "name": "@quilt/tester-bandwidth",
   "version": "0.0.1",
-  "main": "./tester.js",
   "license": "MIT",
   "dependencies": {
     "@quilt/quilt": "quilt/quilt",

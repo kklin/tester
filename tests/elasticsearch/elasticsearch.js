@@ -1,6 +1,6 @@
 const {createDeployment} = require("@quilt/quilt");
 var Elasticsearch = require("@quilt/elasticsearch").Elasticsearch;
-var infrastructure = require("../../config/infrastructure.js")
+var infrastructure = require("@quilt/tester/config/infrastructure")
 
 var deployment = createDeployment({});
 deployment.deploy(infrastructure);

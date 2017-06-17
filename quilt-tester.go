@@ -117,8 +117,8 @@ func (t *tester) generateTestSuites(testRoot string) error {
 			path := filepath.Join(testSuiteFolder, file.Name())
 			switch {
 			case strings.HasSuffix(file.Name(), ".js"):
-				blueprint = path
-				if err := updateNamespace(blueprint, t.namespace); err != nil {
+				blueprint, err = setupBlueprintSandbox(path, t.namespace)
+				if err != nil {
 					l.infoln(fmt.Sprintf(
 						"Error updating namespace for %s.", blueprint))
 					l.errorln(err.Error())
@@ -131,7 +131,7 @@ func (t *tester) generateTestSuites(testRoot string) error {
 		}
 		newSuite := testSuite{
 			name:      filepath.Base(testSuiteFolder),
-			blueprint: "./" + blueprint,
+			blueprint: blueprint,
 			test:      test,
 		}
 		t.testSuites = append(t.testSuites, &newSuite)
@@ -179,18 +179,9 @@ func (t *tester) setup() error {
 	l.infoln("Starting the Quilt daemon.")
 	go runQuiltDaemon()
 
-	// Get blueprint dependencies.
-	l.infoln("Installing blueprint dependencies")
-	_, _, err := npmInstall()
-	if err != nil {
-		l.infoln("Could not install dependencies")
-		l.errorln(err.Error())
-		return err
-	}
-
 	// Do a preliminary quilt stop.
 	l.infoln(fmt.Sprintf("Preliminary `quilt stop %s`", t.namespace))
-	_, _, err = stop(t.namespace)
+	_, _, err := stop(t.namespace)
 	if err != nil {
 		l.infoln(fmt.Sprintf("Error stopping: %s", err.Error()))
 		return err
@@ -199,16 +190,17 @@ func (t *tester) setup() error {
 	// Setup infrastructure.
 	l.infoln("Booting the machines the test suites will run on, and waiting " +
 		"for them to connect back.")
-	l.infoln("Begin " + infrastructureBlueprint)
-	if err := updateNamespace(infrastructureBlueprint, t.namespace); err != nil {
+	infrastructureBlueprint, err = setupBlueprintSandbox(infrastructureBlueprint, t.namespace)
+	if err != nil {
 		l.infoln(fmt.Sprintf("Error updating namespace for %s.",
 			infrastructureBlueprint))
 		l.errorln(err.Error())
 		return err
 	}
 	contents, _ := fileContents(infrastructureBlueprint)
+	l.infoln("Begin " + filepath.Base(infrastructureBlueprint))
 	l.println(contents)
-	l.infoln("End " + infrastructureBlueprint)
+	l.infoln("End " + filepath.Base(infrastructureBlueprint))
 
 	_, _, err = runBlueprintUntilConnected(infrastructureBlueprint)
 	if err != nil {
