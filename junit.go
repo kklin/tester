@@ -20,8 +20,17 @@ type TestCase struct {
 	ClassName   string    `xml:"classname,attr"`
 	TimeElapsed string    `xml:"time,attr"`
 	Failure     *struct{} `xml:"failure,omitempty"`
+	Skipped     *struct{} `xml:"skipped,omitempty"`
 	Output      string    `xml:"system-out"`
 }
+
+type testResult int
+
+const (
+	testPassed testResult = iota
+	testFailed
+	testSkipped
+)
 
 func writeJUnitReport(tests []*testSuite, filename string) {
 	report := JUnitReport{NumTests: len(tests)}
@@ -37,9 +46,16 @@ func writeJUnitReport(tests []*testSuite, filename string) {
 			Output:      t.output,
 			TimeElapsed: fmt.Sprintf("%f", t.timeElapsed.Seconds()),
 		}
-		if !t.passed {
+
+		switch t.result {
+		case testPassed:
+			// Nothing needs to be done.
+		case testSkipped:
+			junitResult.Skipped = &struct{}{}
+		default:
 			junitResult.Failure = &struct{}{}
 		}
+
 		report.TestResults = append(report.TestResults, junitResult)
 	}
 

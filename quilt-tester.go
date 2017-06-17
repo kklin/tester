@@ -56,6 +56,7 @@ func main() {
 type tester struct {
 	preserveFailed bool
 	junitOut       string
+	toSkip         map[string]struct{}
 
 	testSuites  []*testSuite
 	initialized bool
@@ -65,6 +66,7 @@ type tester struct {
 func newTester(namespace string) (tester, error) {
 	t := tester{
 		namespace: namespace,
+		toSkip:    map[string]struct{}{},
 	}
 
 	testRoot := flag.String("testRoot", "",
@@ -73,6 +75,7 @@ func newTester(namespace string) (tester, error) {
 		"don't destroy machines on failed tests")
 	flag.StringVar(&t.junitOut, "junitOut", "",
 		"location to write junit report")
+	flag.Var(stringSet(t.toSkip), "skip", "test to skip")
 	flag.Parse()
 
 	if *testRoot == "" {
@@ -127,9 +130,9 @@ func (t *tester) generateTestSuites(testRoot string) error {
 			}
 		}
 		newSuite := testSuite{
-			name: filepath.Base(testSuiteFolder),
+			name:      filepath.Base(testSuiteFolder),
 			blueprint: "./" + blueprint,
-			test: test,
+			test:      test,
 		}
 		t.testSuites = append(t.testSuites, &newSuite)
 	}
@@ -145,7 +148,7 @@ func (t tester) run() error {
 
 		failed := false
 		for _, suite := range t.testSuites {
-			if !suite.passed {
+			if suite.result == testFailed {
 				failed = true
 				break
 			}
@@ -162,7 +165,7 @@ func (t tester) run() error {
 		log.testerLogger.errorln("Unable to setup the tests, bailing.")
 		// All suites failed if we didn't run them.
 		for _, suite := range t.testSuites {
-			suite.passed = false
+			suite.result = testFailed
 		}
 		return err
 	}
@@ -222,9 +225,13 @@ func (t *tester) setup() error {
 	return nil
 }
 
-func (t tester) runTestSuites() error {
-	var err error
+func (t tester) runTestSuites() (err error) {
 	for _, suite := range t.testSuites {
+		if _, shouldSkip := t.toSkip[suite.name]; shouldSkip {
+			suite.result = testSkipped
+			continue
+		}
+
 		if e := suite.run(); e != nil && err == nil {
 			err = e
 		}
@@ -238,7 +245,7 @@ type testSuite struct {
 	test      string
 
 	output      string
-	passed      bool
+	result      testResult
 	timeElapsed time.Duration
 }
 
@@ -271,7 +278,7 @@ func (ts *testSuite) run() error {
 	l.infoln("Waiting for containers to start up")
 	if err := waitForContainers(ts.blueprint); err != nil {
 		l.println(".. Containers never started: " + err.Error())
-		ts.passed = false
+		ts.result = testFailed
 		return err
 	}
 
@@ -286,10 +293,10 @@ func (ts *testSuite) run() error {
 		ts.output, err = runTest(ts.test)
 		if err == nil {
 			l.println(".... Passed")
-			ts.passed = true
+			ts.result = testPassed
 		} else {
 			l.println(".... Failed")
-			ts.passed = false
+			ts.result = testFailed
 		}
 	}
 
