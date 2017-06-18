@@ -1,1 +1,16 @@
 node_modules
+commandOutputs.log
+tests/10-network/check_network
+tests/100-logs/check_logs
+tests/15-bandwidth/check_bandwidth
+tests/20-spark/check_spark
+tests/30-mean/check_mean
+tests/40-stop/check_stop
+tests/61-duplicate-cluster/check_duplicate_cluster
+tests/build-dockerfile/check_custom_images
+tests/elasticsearch/check_elasticsearch
+tests/etcd/check_etcd
+tests/inbound-public/check_inbound_public
+tests/load-balancer/check_load_balancer
+tests/outbound-public/check_outbound_public
+tests/zookeeper/check_zookeeper
