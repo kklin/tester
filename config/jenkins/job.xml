@@ -55,8 +55,13 @@ export PATH=${GOPATH}/bin:${WORKSPACE}/bin:${PATH}
 go get -v github.com/quilt/tester
 
 cd $GOPATH/src/github.com/quilt/tester
-make tests
-tester --preserve-failed -testRoot=./tests -junitOut=${WORKSPACE}/report.xml</command>
+
+# Get the integration tests associated with the release.
+mkdir tgt-src
+curl -sL https://github.com/quilt/quilt/archive/${QUILT_VERSION}.tar.gz | tar xz -C tgt-src
+(cd tgt-src/*/integration-tests &amp;&amp; make tests)
+
+tester --preserve-failed -testRoot=tgt-src/*/integration-tests -junitOut=${WORKSPACE}/report.xml</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
