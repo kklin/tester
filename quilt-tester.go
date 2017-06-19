@@ -95,11 +95,26 @@ func (t *tester) generateTestSuites(testRoot string) error {
 
 	// First, we need to ls the testRoot, and find all of the folders. Then we can
 	// generate a testSuite for each folder.
-	testSuiteFolders, err := filepath.Glob(filepath.Join(testRoot, "*"))
+	testRootFiles, err := filepath.Glob(filepath.Join(testRoot, "*"))
 	if err != nil {
 		l.infoln("Could not access test suite folders")
 		l.errorln(err.Error())
 		return err
+	}
+
+	var testSuiteFolders []string
+	for _, f := range testRootFiles {
+		stat, err := os.Stat(f)
+		if err != nil {
+			l.infoln(fmt.Sprintf("Failed to stat potential test suite %s. "+
+				"Ignoring.", f))
+			l.errorln(err.Error())
+			continue
+		}
+
+		if stat.IsDir() {
+			testSuiteFolders = append(testSuiteFolders, f)
+		}
 	}
 
 	sort.Sort(byPriorityPrefix(testSuiteFolders))
