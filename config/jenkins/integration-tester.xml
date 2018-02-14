@@ -26,6 +26,11 @@
           <description>The number of Kelda workers to boot.</description>
           <defaultValue>3</defaultValue>
         </hudson.model.StringParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>DISABLE_AFTER_FAILURE</name>
+          <description>Disable subsequent test runs after a test suite failure. This makes it so that the integration test runner doesn&apos;t run any more test suites, and disables subsequent Jenkins runs. To reenable the tests after debugging, the project must be manually reenabled by the admin user.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
     <org.jenkinsci.plugins.junitrealtimetestreporter.PerJobConfiguration plugin="junit-realtime-test-reporter@0.5"/>
@@ -43,7 +48,8 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-        <command>
+        <command>#!/bin/bash
+
 export GOPATH=${WORKSPACE}/gohome
 export PATH=${GOPATH}/bin:${WORKSPACE}/bin:${PATH}
 
@@ -66,7 +72,16 @@ cd ${srcPath}/integration-tester
 go build .
 make tests
 
-./integration-tester --preserve-failed -testRoot=./tests -junitOut=${WORKSPACE}/test-results</command>
+args=(
+  --preserve-failed
+  -testRoot=./tests
+  -junitOut=${WORKSPACE}/test-results
+)
+if [[ $DISABLE_AFTER_FAILURE == "true" ]]; then
+    args+=(--exit-on-first-failure)
+fi
+
+./integration-tester "${args[@]}"</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
@@ -158,7 +173,13 @@ if (numFailed > 0) {
     ]
 }
 
-notifySlack(manager.getEnvVariable('SLACK_CHANNEL'), attachments)]]></script>
+notifySlack(manager.getEnvVariable('SLACK_CHANNEL'), attachments)
+
+if (manager.build.buildVariables.get('DISABLE_AFTER_FAILURE') == 'true' &&
+  manager.build.result.isWorseThan(hudson.model.Result.SUCCESS)) {
+  manager.build.project.disabled = true
+}
+]]></script>
         <sandbox>false</sandbox>
       </script>
       <behavior>0</behavior>

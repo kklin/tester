@@ -9,7 +9,7 @@ resulting file at /var/jenkins_home/scriptApproval.xml.
 -->
 <scriptApproval plugin="script-security@1.27">
   <approvedScriptHashes>
-    <string>0b9bc74f6199692ce7996b808f6a97ab27fcaf28</string>
+    <string>90084964b408380ad4e8029f114fec031cbd94ca</string>
   </approvedScriptHashes>
   <approvedSignatures/>
   <aclApprovedSignatures/>
