@@ -142,7 +142,7 @@ exports.New = function New(opts, scp) {
     command: ['/bin/bash', '-c',
       `cp -r ${jenkinsStagingDir}. /var/jenkins_home;` +
       `chmod 0600 ${releaserKeyPath};` +
-            '/bin/tini -s -- /usr/local/bin/jenkins.sh'],
+            '/sbin/tini -- /usr/local/bin/jenkins.sh'],
   });
   jenkins.env.AWS_ACCESS_KEY = opts.awsAccessKey;
   jenkins.env.AWS_SECRET_ACCESS_KEY = opts.awsSecretAccessKey;
